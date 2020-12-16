@@ -1,10 +1,3 @@
-//
-//  Speech_RecognizerUITests.swift
-//  Speech RecognizerUITests
-//
-//  Created by vsnyukhtilin on 15.12.2020.
-//
-
 import XCTest
 
 class Speech_RecognizerUITests: XCTestCase {

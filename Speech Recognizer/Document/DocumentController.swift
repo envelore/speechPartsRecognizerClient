@@ -77,15 +77,15 @@ final class DocumentViewController: UIViewController, DocumentViewInput {
                 let color: UIColor
                 switch speechParts[index] {
                 case .noun:
-                    color = .cyan
+                    color = .blue
                 case .verb:
-                    color = .yellow
+                    color = .red
                 case .adjective:
-                    color = .green
+                    color = .magenta
                 default:
-                    color = .clear
+                    color = .black
                 }
-                attributedString.setAttributes([.backgroundColor: color], range: range.nsRange(in: previousText))
+                attributedString.setAttributes([.foregroundColor: color], range: range.nsRange(in: previousText))
                 index += 1
             }
         }

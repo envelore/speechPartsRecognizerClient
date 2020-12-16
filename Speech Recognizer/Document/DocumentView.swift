@@ -8,9 +8,11 @@ final class DocumentView: UIView, UITextViewDelegate {
         static let buttonSize = CGSize(width: 34, height: 34)
     }
     
+    // MARK: - Subviews
     private let textView: UITextView = {
         let textView = UITextView()
         textView.isPagingEnabled = true
+        textView.isEditable = false
         textView.font = UIFont.systemFont(ofSize: Spec.fontSize)
         return textView
     }()
@@ -30,6 +32,7 @@ final class DocumentView: UIView, UITextViewDelegate {
     var onDidScroll: ((NSRange, String?) -> ())?
     var onDidAppear: (() -> ())?
     
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -45,63 +48,7 @@ final class DocumentView: UIView, UITextViewDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setViewData(text: NSAttributedString, needReload: Bool) {
-        textView.attributedText = text
-        if needReload {
-            handleNewPage()
-        }
-    }
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        handleNewPage()
-    }
-    
-    private func handleNewPage() {
-        if let range = textView.visibleRange,
-           let visibleText = textView.text as NSString? {
-            let text = visibleText.substring(with: range)
-            onDidScroll?(range, text)
-        }
-    }
-    
-    func showError(text: String) {
-        let errorView = UILabel(
-            frame: CGRect(
-                x: 16,
-                y: frame.height + 60,
-                width: frame.width - 16,
-                height: 50
-            )
-        )
-        errorView.text = text
-        errorView.textAlignment = .center
-        addSubview(errorView)
-        
-        UIView.animate(
-            withDuration: 0.5,
-            animations: {
-                errorView.frame.origin.y -= 130
-            },
-            completion: { [weak self] _ in
-                self?.hideError(toastView: errorView)
-            }
-        )
-    }
-    
-    private func hideError(toastView: UIView) {
-        UIView.animate(
-            withDuration: 0.5,
-            delay: 3,
-            options: .curveLinear,
-            animations: {
-                toastView.frame.origin.y += 130
-            },
-            completion: { _ in
-                toastView.removeFromSuperview()
-            }
-        )
-    }
-    
+    // MARK: - Layout
     override func layoutSubviews() {
         super.layoutSubviews()
         textView.frame.origin.x = .zero
@@ -116,6 +63,67 @@ final class DocumentView: UIView, UITextViewDelegate {
             y: Spec.buttonOffset.top + safeAreaInsets.top,
             width: Spec.buttonSize.width,
             height: Spec.buttonSize.height
+        )
+    }
+    
+    // MARK: - Internal
+    func setViewData(text: NSAttributedString, needReload: Bool) {
+        textView.attributedText = text
+        if needReload {
+            handleNewPage()
+        }
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        handleNewPage()
+    }
+    
+    func showError(text: String) {
+        let errorView = UILabel(
+            frame: CGRect(
+                x: 16,
+                y: frame.height + 60,
+                width: frame.width - 32,
+                height: 50
+            )
+        )
+        errorView.text = text
+        errorView.textAlignment = .center
+        errorView.textColor = .white
+        errorView.backgroundColor = .black
+        addSubview(errorView)
+        
+        UIView.animate(
+            withDuration: 0.5,
+            animations: {
+                errorView.frame.origin.y -= 130
+            },
+            completion: { [weak self] _ in
+                self?.hideError(toastView: errorView)
+            }
+        )
+    }
+    
+    // MARK: - Private
+    private func handleNewPage() {
+        if let range = textView.visibleRange,
+           let visibleText = textView.text as NSString? {
+            let text = visibleText.substring(with: range)
+            onDidScroll?(range, text)
+        }
+    }
+    
+    private func hideError(toastView: UIView) {
+        UIView.animate(
+            withDuration: 0.5,
+            delay: 3,
+            options: .curveLinear,
+            animations: {
+                toastView.frame.origin.y += 130
+            },
+            completion: { _ in
+                toastView.removeFromSuperview()
+            }
         )
     }
     

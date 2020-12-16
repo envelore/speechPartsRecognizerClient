@@ -1,10 +1,3 @@
-//
-//  Speech_RecognizerTests.swift
-//  Speech RecognizerTests
-//
-//  Created by vsnyukhtilin on 15.12.2020.
-//
-
 import XCTest
 @testable import Speech_Recognizer
 
